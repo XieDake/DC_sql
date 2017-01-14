@@ -1,8 +1,8 @@
 use testing;
-#提取用户贷前每月的消费特征！
+#提取用户贷后每月的消费特征！
 #暂时18维！
-drop table if exists features_2;
-create table features_2
+drop table if exists features_2_later;
+create table features_2_later
 (
 user_id int(20) not null,
 mean_consume_numbers int(10) not null default 0,
@@ -26,7 +26,7 @@ consumed_rate float not null default 0
 )
 ;
 #insert
-insert into features_2
+insert into features_2_later
 (
 select
 t1.user_id,
@@ -55,21 +55,21 @@ loan_time_new_final as t2
 where
 (t1.user_id=t2.user_id)
 and
-(t1.bill_time_stamp<=t2.loan_time)
+(t1.bill_time_stamp>t2.loan_time)
 #对where后的结果进行group by
 group by t1.user_id
 );
 #防止除0，处理！update!
-update features_2
+update features_2_later
 #1个rate
 set consumed_rate=0
 where consumed_rate>100000000;
 #feature_2 id补齐！
-insert into features_2 (features_2.user_id)
+insert into features_2_later(features_2_later.user_id)
 (#返回overdue中有但是features中没有的user！
 select distinct(t1.user_id) from userid_predict_final as t1
 where
-(t1.user_id not in (select distinct(user_id) from features_2))
+(t1.user_id not in (select distinct(user_id) from features_2_later))
 );
 
 

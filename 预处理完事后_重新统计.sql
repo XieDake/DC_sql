@@ -64,14 +64,27 @@ use testing;
 select count(distinct(user_id)) from userid_predict_final;
 select count(distinct(user_id)) from loan_time_new_final;
 select count(distinct(user_id)) from bill_detail;
+select count(distinct(user_id)) from browse_history_new_final;
 #training
 select user_id,Bank_id,Credit_limit from bill_detail_new_final;
 select t1.user_id,t1.Bank_id,t1.benqizhangdanjine,t1.benqizhangdanyue,t1.adjust_money from bill_detail_new_final as t1;
 #
 select t1.user_id,avg(t1.benqizhangdanyue),max(t1.benqizhangdanyue),min(t1.benqizhangdanyue) from bill_detail_new_final as t1 group by t1.user_id;
-
-
-
+#
+select * from userinfo_new_final;
+select distinct(sex_type) from userinfo_new_final;
+select distinct(occupation) from userinfo_new_final;
+select distinct(education) from userinfo_new_final;
+select distinct(marriage) from userinfo_new_final;
+select distinct(person_type) from userinfo_new_final;
+#
+use training;
+select t1.lastTime_moneyReturn,t1.lastTime_moneyUsing from bill_detail_new_final as t1;
+select * from bill_detail_new_final as t1;
+#
+select * from loan_time_new_final order by user_id;
+select t1.user_id,min(t1.loan_time) from loan_time_new_final as t1 group by t1.user_id;
+select t1.user_id,count(distinct(t1.bill_time_stamp)) from bill_detail_new_final as t1 group by t1.user_id;
 
 
 

@@ -68,10 +68,27 @@ and
 group by t1.user_id
 );
 #防止除0，处理！update!
-update features_1
 #3个率！
-set s_1_times_prob=0,s_0_times_prob=0,mean_moneyreturn_rate=0
+#1
+update features_1
+set s_1_times_prob=0
 where 
-(s_1_times_prob>100000000)or
-(s_0_times_prob>100000000)or
+(s_1_times_prob>100000000);
+#2
+update features_1
+set s_0_times_prob=0
+where 
+(s_0_times_prob>100000000)
+;
+#3
+update features_1
+set mean_moneyreturn_rate=0
+where 
 (mean_moneyreturn_rate>100000000);
+#feature_1 id补齐！
+insert into features_1 (features_1.user_id)
+(#返回overdue中有但是features中没有的user！
+select distinct(t1.user_id) from overdue_new_final as t1
+where
+(t1.user_id not in (select distinct(user_id) from features_1))
+);

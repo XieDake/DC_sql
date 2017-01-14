@@ -1,10 +1,10 @@
 use testing;
-#1提取贷前用户信用卡数目特征
-#2提取贷前用户信用特征（银行反应之！）
+#1提取贷后用户信用卡数目特征
+#2提取贷后用户信用特征（银行反应之！）
 #3用户行用卡的还款能力！
 #话说有些人没有贷前信息，只有贷后信息！
-drop table if exists features_1;
-create table features_1
+drop table if exists features_1_later;
+create table features_1_later
 (
 user_id int(20) not null,
 credit_card_numbers int(10) not null default 0,
@@ -30,7 +30,7 @@ min_lastmoneyuse float not null default 0,
 max_lastmoneyuse float not null default 0
 );
 #insert
-insert into features_1
+insert into features_1_later
 (select 
 t1.user_id,
 #信用卡数目
@@ -63,32 +63,32 @@ loan_time_new_final as t2
 where 
 (t1.user_id=t2.user_id)
 and
-(t1.bill_time_stamp<=t2.loan_time)
+(t1.bill_time_stamp>t2.loan_time)
 #group by是对where筛选的结果进行group！所以人数肯定没有补齐咯！
 group by t1.user_id
 );
 #防止除0，处理！update!
 #3个率！
 #1
-update features_1
+update features_1_later
 set s_1_times_prob=0
 where 
 (s_1_times_prob>100000000);
 #2
-update features_1
+update features_1_later
 set s_0_times_prob=0
 where 
 (s_0_times_prob>100000000)
 ;
 #3
-update features_1
+update features_1_later
 set mean_moneyreturn_rate=0
 where 
 (mean_moneyreturn_rate>100000000);
 #feature_1 id补齐！
-insert into features_1 (features_1.user_id)
+insert into features_1_later (features_1_later.user_id)
 (#返回overdue中有但是features中没有的user！
 select distinct(t1.user_id) from userid_predict_final as t1
 where
-(t1.user_id not in (select distinct(user_id) from features_1))
+(t1.user_id not in (select distinct(user_id) from features_1_later))
 );
