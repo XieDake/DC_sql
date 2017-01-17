@@ -85,8 +85,25 @@ select * from bill_detail_new_final as t1;
 select * from loan_time_new_final order by user_id;
 select t1.user_id,min(t1.loan_time) from loan_time_new_final as t1 group by t1.user_id;
 select t1.user_id,count(distinct(t1.bill_time_stamp)) from bill_detail_new_final as t1 group by t1.user_id;
-
-
+#浏览信息统计！
+select t2.user_id,t2.loan_time,t1.Time_stamp from browse_history_new_final as t1,loan_time_new_final as t2
+where(t1.user_id=t2.user_id)and(t1.Time_stamp>t2.loan_time);
+#贷款后还看的人：11660
+select count(distinct(t1.user_id))from browse_history_new_final as t1,loan_time_new_final as t2
+where(t1.user_id=t2.user_id)and(t1.Time_stamp>t2.loan_time);
+#贷款前看过的人：
+select count(distinct(t1.user_id))from browse_history_new_final as t1,loan_time_new_final as t2
+where(t1.user_id=t2.user_id)and(t1.Time_stamp<=t2.loan_time);
+#
+select * from browse_history_new_final order by browse_behaviour_mark;
+#
+select count(distinct(t1.browse_behaviour)),count(distinct(t1.browse_behaviour_mark)) from browse_history_new_final as t1;
+# 
+select 
+t1.user_id,
+min(distinct(t1.browse_behaviour)),max(distinct(t1.browse_behaviour)),count(distinct(t1.browse_behaviour)),
+min(distinct(t1.browse_behaviour_mark)),max(distinct(t1.browse_behaviour_mark)),count(distinct(t1.browse_behaviour_mark))
+from browse_history_new_final as t1 group by t1.user_id;
 
 
 
